@@ -17,8 +17,8 @@ jobs:
       services: ${{ steps.filter.outputs.changes }}
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v7.0.1
-      - name: filter
+        uses: actions/checkout@v4.2.2
+      - name: Filter
         id: filter
         uses: dorny/paths-filter@v3.0.2
         with:
@@ -28,13 +28,14 @@ jobs:
   test:
     runs-on: ubuntu-24.04
     needs: filter
+    if: ${{ needs.filter.outputs.services != '[]' && needs.filter.outputs.services != '' }}
     strategy:
       fail-fast: false
       matrix:
         service: ${{ fromJson(needs.filter.outputs.services) }}
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v7.0.1
+        uses: actions/checkout@v4.2.2
       - name: Setup node
         if: ${{ startsWith(matrix.service, 'services/node/') || startsWith(matrix.service, 'services/react/') }}
         uses: actions/setup-node@v4.4.0
